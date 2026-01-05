@@ -1,31 +1,52 @@
-Kubernetes manages containerised applications based on images. These images can be created locally, or more commonly are fetched from a remote image registry
+# Using a Local Image Registry with MicroK8s
 
-Using Docker to build a custom image base on nginx
+Kubernetes manages containerized applications based on images. These images can be created locally or, more commonly, fetched from a remote image registry.
 
-Content of the Dockerfile:
+## Building a Custom Image with Docker
+
+Create a `Dockerfile` with the following content:
+
+```dockerfile
 FROM nginx
+```
 
-Build the image and tag it with 'local' in the directory where Dockerfile placed
+Build the image and tag it as `mynginx:local` in the directory where the `Dockerfile` is located:
 
+```bash
 docker build . -t mynginx:local
+```
 
-This will generate a new local image tagged mynginx:local
+This will generate a new local image tagged `mynginx:local`.
 
-Working with locally built image without a registry
+## Working with Locally Built Images Without a Registry
 
-When an image is built it is cached on the Docker daemon used during the build. Having run the docker build . -t mynginx:local command, you can see the newly built image by running
+When an image is built, it is cached on the Docker daemon used during the build.  
+
+```bash
 docker images
+```
 
-The image we created is known to Docker. However, Kubernetes is not aware of the newly built image. This is because your local Docker daemon is not part of the MicroK8s Kubernetes cluster. We can export the built image from the local Docker daemon and “inject” it into the MicroK8s image cache like this:
+The image is known to Docker, but Kubernetes (via MicroK8s) is not aware of it.  
+This is because your local Docker daemon is not part of the MicroK8s Kubernetes cluster.
 
+To use the image with MicroK8s, export it from Docker and import it into the MicroK8s image cache:
+
+```bash
 docker save mynginx > myimage.tar
 microk8s ctr image import myimage.tar
+```
 
-Now we can list the images present in MicroK8s
+Now, list the images present in MicroK8s:
+
+```bash
 microk8s ctr images ls
+```
 
-Testing access to this image using a sample manifest file:
+## Testing the Image with a Sample Deployment
 
+Use the following manifest to deploy your image:
+
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,7 +68,8 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 80
+```
 
-Note: 
-- Make sure the imagePullPolicy is set to Ǹever as shown above, otherwise MicroK8s will continue to try and pull from Dockerhub, even if the image is present in the local registry.
-- containerd will not cache images with the latest tag so make sure you avoid it.
+**Notes:**
+- Make sure the `imagePullPolicy` is set to `Never`, otherwise MicroK8s will try to pull from Docker Hub even if the image is present locally.
+- `containerd` will not cache images with the `latest` tag, so avoid using it.
