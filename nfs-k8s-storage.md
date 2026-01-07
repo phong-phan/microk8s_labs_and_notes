@@ -43,7 +43,7 @@ systemctl enable --now nfs-server.service
 
 ```bash
 mkdir /nfs_share
-chmod 755 /nfs_share
+chmod 777 /nfs_share
 ```
 
 ---
@@ -51,7 +51,7 @@ chmod 755 /nfs_share
 ### Configure NFS Exports
 
 ```bash
-echo "/nfs_share *(rw,sync,no_subtree_check)" | tee -a /etc/exports
+echo "/nfs_share *(rw,sync,no_subtree_check,no_root_squash)" | tee -a /etc/exports
 ```
 
 ---
