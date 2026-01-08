@@ -33,7 +33,6 @@ This repository documents my research, testing, and practical notes on [MicroK8s
 - **Datastore standby nodes:** none
 
 ---
-
 ## Enabled Addons
 
 - `trivy`                — Kubernetes-native security scanner
