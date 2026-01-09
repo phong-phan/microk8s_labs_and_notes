@@ -1,0 +1,1 @@
+Like a wrapper for container, providing more control over container like resource grouping, container health checking, restart container, lifecycle allow us to take actions when pod crash or shutdown. K8s will manage pod instead of container directly

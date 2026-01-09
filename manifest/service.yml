@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  selector:
+    env: test
+    owner: phong
+  ports:
+    # This port is Pod's Port
+    - targetPort: 80
+      # This port is Service's Port
+      port: 80
+      # This port is Node's Port
+      nodePort: 30008
+  type: NodePort
